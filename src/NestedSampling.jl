@@ -5,13 +5,14 @@ mutable struct Object
     logL::Float64
 end
 
+# ?? how to access filed of Array{Struct}
+# we should sample the parameter and compute the likelihood as logLtotal = ∑ logL(x | Dᵢ)
 function prior(obj::Array{Object}, π::Distributions.Sampleable)
     tmp = rand(π, length(obj))
     logL = logpdf(Normal(0.0, 1.0), tmp)
     for i=1:length(obj)
         obj[i] = Object(0.0, logL[i])
     end
-
     return nothing
 end
 
@@ -29,6 +30,7 @@ function explore(obj::Object, μ::Float64=0.0, σ::Float64=1.0)
 
     obj.logL = logpdf(Normal(0.0, 1.0), xnew)
     obj.logWt = 0.0
+    return nothing
 end
 
 function ⨁(x::Number, y::Number)
@@ -46,8 +48,12 @@ H = 0.0
 
 objs = Array{Object, 1}(undef, n)
 samples = Array{Object, 1}(undef, MAX)
-# prior(objs, Uniform(-1.0, 1.0))
-prior(objs, Normal(0.0, 1.0))
+
+# data already given
+
+
+prior(objs, Uniform(100.0, 101.0))
+# prior(objs, Normal(0.0, 1.0))
 
 logwidth = log(1.0 - exp(-1.0 / n));
 
